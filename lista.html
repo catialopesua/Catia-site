@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cátia's Lists</title>
+    <style>
+        body {
+            background-color: #fce4ec; /* Tom de rosa */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 1000px; /* Definindo uma largura máxima para aprimorar a aparência */
+            margin: auto;
+        }
+        h1 {
+            color: #ff4081; /* Tom de rosa mais escuro */
+        }
+        .list-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .list {
+            flex: 1;
+            border: 2px solid #ff4081; /* Tom de rosa mais escuro */
+            border-radius: 10px;
+            padding: 10px;
+            margin: 0 10px;
+            text-align: left;
+        }
+        .list h2 {
+            color: #ff4081; /* Tom de rosa mais escuro */
+        }
+        .item {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .rating {
+            width: 30px;
+        }
+        .delete-button {
+            background-color: #ff4081; /* Tom de rosa mais escuro */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body onload="loadData()">
+    <div class="container">
+        <h1 id="userListTitle">Cátia's Lists</h1>
+        
+        <!-- Listas -->
+        <div class="list-container">
+            <div class="list" id="seriesList">
+                <h2>Séries</h2>
+                <div class="item">
+                    <input type="text" id="seriesItem" placeholder="Adicionar Série">
+                    <input type="number" id="seriesRating" placeholder="Rating" class="rating" min="0" max="10">
+                    <button onclick="addItem('seriesList', 'seriesItem', 'seriesRating')">Adicionar</button>
+                </div>
+            </div>
+
+            <div class="list" id="moviesList">
+                <h2>Filmes</h2>
+                <div class="item">
+                    <input type="text" id="moviesItem" placeholder="Adicionar Filme">
+                    <input type="number" id="moviesRating" placeholder="Rating" class="rating" min="0" max="10">
+                    <button onclick="addItem('moviesList', 'moviesItem', 'moviesRating')">Adicionar</button>
+                </div>
+            </div>
+
+            <div class="list" id="gamesList">
+                <h2>Jogos</h2>
+                <div class="item">
+                    <input type="text" id="gamesItem" placeholder="Adicionar Jogo">
+                    <input type="number" id="gamesRating" placeholder="Rating" class="rating" min="0" max="10">
+                    <button onclick="addItem('gamesList', 'gamesItem', 'gamesRating')">Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadData() {
+            var loggedInUser = localStorage.getItem('loggedInUser') || '';
+            document.getElementById('userListTitle').textContent = loggedInUser + "'s List";
+
+            loadList('seriesList');
+            loadList('moviesList');
+            loadList('gamesList');
+        }
+
+        // Função para carregar os dados da lista da localStorage
+        function loadList(listId) {
+            var loggedInUser = localStorage.getItem('loggedInUser') || '';
+            var userLists = JSON.parse(localStorage.getItem(loggedInUser)) || {};
+
+            if (userLists[listId]) {
+                userLists[listId].forEach(function (listItem) {
+                    var newItem = document.createElement('div');
+                    newItem.classList.add('item');
+                    newItem.innerHTML = listItem.item + ' (Rating: ' + listItem.rating + '/10) <button class="delete-button" onclick="deleteItem(\'' + listId + '\', \'' + listItem.item + '\')">Excluir</button>';
+                    var list = document.getElementById(listId);
+                    list.appendChild(newItem);
+                });
+            }
+        }
+        // Função para adicionar itens às listas
+        function addItem(listId, inputId, ratingId) {
+            var itemInput = document.getElementById(inputId);
+            var ratingInput = document.getElementById(ratingId);
+            var itemValue = itemInput.value.trim();
+            var ratingValue = parseInt(ratingInput.value);
+
+            if (itemValue !== '') {
+                // Salva o item e o rating na localStorage associada ao usuário
+                saveItem(listId, itemValue, ratingValue);
+
+                // Adiciona o novo item à lista correspondente
+                var newItem = document.createElement('div');
+                newItem.classList.add('item');
+                newItem.innerHTML = itemValue + ' (Rating: ' + ratingValue + '/10) <button class="delete-button" onclick="deleteItem(\'' + listId + '\', \'' + itemValue + '\')">Excluir</button>';
+                var list = document.getElementById(listId);
+                list.appendChild(newItem);
+
+                // Limpa os campos de entrada
+                itemInput.value = '';
+                ratingInput.value = '';
+            } else {
+                alert('Por favor, preencha o campo de adição.');
+            }
+        }
+
+        // Função para salvar o item e rating na localStorage associada ao usuário
+        function saveItem(listId, item, rating) {
+            var loggedInUser = localStorage.getItem('loggedInUser') || '';
+            var userLists = JSON.parse(localStorage.getItem(loggedInUser)) || {};
+
+            if (!userLists[listId]) {
+                userLists[listId] = [];
+            }
+
+            userLists[listId].push({ item: item, rating: rating });
+            localStorage.setItem(loggedInUser, JSON.stringify(userLists));
+        }
+
+        // Função para excluir um item da lista
+        function deleteItem(listId, item) {
+            var loggedInUser = localStorage.getItem('loggedInUser') || '';
+            var userLists = JSON.parse(localStorage.getItem(loggedInUser)) || {};
+
+            if (userLists[listId]) {
+                userLists[listId] = userLists[listId].filter(function (listItem) {
+                    return listItem.item !== item;
+                });
+
+                localStorage.setItem(loggedInUser, JSON.stringify(userLists));
+                refreshList(listId);
+            }
+        }
+
+        // Função para atualizar a lista na página após excluir um item
+        function refreshList(listId) {
+            var list = document.getElementById(listId);
+            list.innerHTML = '<h2>' + getListTitle(listId) + '</h2>';
+
+            var loggedInUser = localStorage.getItem('loggedInUser') || '';
+            var userLists = JSON.parse(localStorage.getItem(loggedInUser)) || {};
+
+            if (userLists[listId]) {
+                userLists[listId].forEach(function (listItem) {
+                    var newItem = document.createElement('div');
+                    newItem.classList.add('item');
+                    newItem.innerHTML = listItem.item + ' (Rating: ' + listItem.rating + '/10) <button class="delete-button" onclick="deleteItem(\'' + listId + '\', \'' + listItem.item + '\')">Excluir</button>';
+                    list.appendChild(newItem);
+                });
+            }
+        }
+
+        // Função para obter o título da lista
+        function getListTitle(listId) {
+            if (listId === 'seriesList') {
+                return 'Séries';
+            } else if (listId === 'moviesList') {
+                return 'Filmes';
+            } else if (listId === 'gamesList') {
+                return 'Jogos';
+            } else {
+                return 'Lista Desconhecida';
+            }
+        }
+    </script>
+</body>
+</html>

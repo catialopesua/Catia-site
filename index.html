@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cátia's Little Box</title>
+    <style>
+        body {
+            background-color: #fce4ec; /* Tom de rosa */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 300px; /* Definindo uma largura máxima para aprimorar a aparência */
+            margin: auto;
+        }
+        h1 {
+            color: #ff4081; /* Tom de rosa mais escuro */
+        }
+        button {
+            background-color: #ff4081; /* Tom de rosa mais escuro */
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            margin-top: 10px;
+        }
+        input {
+            margin-bottom: 10px;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 2px solid #ff4081; /* Tom de rosa mais escuro */
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cátia's Little Box</h1>
+
+        <!-- Formulário para iniciar sessão -->
+        <div class="login-form">
+            <h2>Iniciar Sessão</h2>
+            <form onsubmit="login(); return false;">
+                <input type="text" id="loginUsername" placeholder="Nome de Usuário" required>
+                <input type="password" id="loginPassword" placeholder="Senha" required>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+
+        <!-- Botão para To-do List -->
+        <button onclick="redirectToTodoList()">Ver To-do List</button>
+
+        <button onclick="redirectToList()">Ver Listas</button>
+    </div>
+
+    <script>
+        // Função para iniciar sessão
+        function login() {
+            var loginUsername = document.getElementById('loginUsername').value.trim();
+            var loginPassword = document.getElementById('loginPassword').value.trim();
+
+            if (loginUsername !== '' && loginPassword !== '') {
+                // Salva os dados na localStorage
+                localStorage.setItem('loggedInUser', loginUsername);
+                alert('Login bem-sucedido!');
+            } else {
+                alert('Por favor, preencha todos os campos.');
+            }
+        }
+
+        // Função para redirecionar para a página da To-do List
+        function redirectToTodoList() {
+            // Implemente a navegação para a página da To-do List aqui
+            window.location.href = 'todoList.html';
+        }
+        function redirectToList() {
+            // Implemente a navegação para a página da To-do List aqui
+            window.location.href = 'lista.html';
+        }
+
+
+
+
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cátia's To-do List</title>
+    <style>
+        body {
+            background-color: #fce4ec; /* Tom de rosa */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 300px; /* Definindo uma largura máxima para aprimorar a aparência */
+            margin: auto;
+        }
+        h1 {
+            color: #ff4081; /* Tom de rosa mais escuro */
+        }
+        textarea {
+            width: calc(100% - 16px);
+            height: 100px;
+            margin-bottom: 10px;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 2px solid #ff4081; /* Tom de rosa mais escuro */
+            border-radius: 5px;
+            resize: none;
+        }
+        button {
+            background-color: #ff4081; /* Tom de rosa mais escuro */
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .todo-item {
+            background-color: #fff;
+            margin-bottom: 8px;
+            padding: 8px;
+            border: 1px solid #ff4081; /* Tom de rosa mais escuro */
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>To-do List</h1>
+        <textarea id="todoInput" placeholder="Adicione uma tarefa..." onkeydown="if (event.keyCode === 13) addTodo();"></textarea>
+        <button onclick="addTodo()">Adicionar Tarefa</button>
+        <div id="todoListContainer">
+            <!-- Lista de tarefas será exibida aqui -->
+        </div>
+    </div>
+
+    <script>
+        // Carrega as tarefas do localStorage ao carregar a página
+        loadTodoList();
+
+        function addTodo() {
+            var todoInput = document.getElementById('todoInput');
+            var todoText = todoInput.value.trim();
+            var loggedInUser = localStorage.getItem('loggedInUser');
+
+            if (todoText !== '') {
+                // Adiciona a tarefa à lista
+                var todoListContainer = document.getElementById('todoListContainer');
+                var newTodoItem = document.createElement('div');
+                newTodoItem.textContent = todoText;
+                newTodoItem.className = 'todo-item';
+                newTodoItem.onclick = function() {
+                    removeTodoItem(newTodoItem);
+                };
+                todoListContainer.appendChild(newTodoItem);
+
+                // Limpa a caixa de texto
+                todoInput.value = '';
+
+                // Salva a lista de tarefas no localStorage associando-a ao usuário logado
+                saveTodoList(loggedInUser);
+            }
+        }
+
+        function removeTodoItem(todoItem) {
+            var todoListContainer = document.getElementById('todoListContainer');
+            todoListContainer.removeChild(todoItem);
+
+            // Salva a lista de tarefas no localStorage associando-a ao usuário logado
+            var loggedInUser = localStorage.getItem('loggedInUser');
+            saveTodoList(loggedInUser);
+        }
+
+        function loadTodoList() {
+            var todoListContainer = document.getElementById('todoListContainer');
+            var loggedInUser = localStorage.getItem('loggedInUser');
+            var storedTodoList = localStorage.getItem(loggedInUser + '_todoList');
+
+            if (storedTodoList) {
+                // Converte a string JSON de volta para um array
+                var todoList = JSON.parse(storedTodoList);
+
+                // Adiciona cada item da lista à página
+                todoList.forEach(function(todoText) {
+                    var todoItem = document.createElement('div');
+                    todoItem.textContent = todoText;
+                    todoItem.className = 'todo-item';
+                    todoItem.onclick = function() {
+                        removeTodoItem(todoItem);
+                    };
+                    todoListContainer.appendChild(todoItem);
+                });
+            }
+        }
+
+        function saveTodoList(loggedInUser) {
+            var todoListContainer = document.getElementById('todoListContainer');
+            var todoItems = todoListContainer.getElementsByClassName('todo-item');
+
+            // Cria um array para armazenar os textos das tarefas
+            var todoList = [];
+
+            // Adiciona cada texto da tarefa ao array
+            for (var i = 0; i < todoItems.length; i++) {
+                todoList.push(todoItems[i].textContent);
+            }
+
+            // Converte o array para uma string JSON e armazena no localStorage associando-o ao usuário logado
+            localStorage.setItem(loggedInUser + '_todoList', JSON.stringify(todoList));
+        }
+    </script>
+</body>
+</html>
